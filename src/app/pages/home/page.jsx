@@ -189,7 +189,7 @@ export default function Home() {
         <div className="flex-1 bg-black/50 backdrop-blur-sm">
           <div className="p-4 space-y-6">
             {/* Stats Cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 ">
               {/* Total Deployments */}
               <div className="bg-gradient-to-br from-white/10 to-white/5 border border-white/20 backdrop-blur-xl rounded-2xl p-5 text-white shadow-md hover:from-white/15 hover:to-white/10 transition-all duration-300">
                 <div className="text-sm text-neutral-300 mb-1">Total Deployments</div>
@@ -307,7 +307,7 @@ export default function Home() {
         </div>
 
         {/* Cards Section */}
-        <div className="absolute bottom-5 left-1/2 transform -translate-x-1/2 md:left-[270px] md:translate-x-0 w-full max-w-6xl px-4 z-50">
+        <div className="absolute bottom-5 left-3/4 transform -translate-x-1/2 md:left-[270px] md:translate-x-0 w-full max-w-6xl px-4 z-50">
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-6 gap-4 mx-auto">
             {/* Total Deployments */}
             <div className="bg-gradient-to-br from-white/10 to-white/5 border border-white/20 backdrop-blur-xl rounded-2xl p-5 text-white shadow-md">
@@ -347,7 +347,7 @@ export default function Home() {
           <div className="bg-gradient-to-br from-white/10 to-white/5 border border-white/20 backdrop-blur-xl rounded-xl p-4 text-white shadow-md">
             <div className="flex items-center justify-between text-lg font-semibold mb-4">
               <span>Activity</span>
-              <img src="/map.png" alt="Activity Icon" className="w-8 h-8 opacity-70" />
+              <img src="/map.png" alt="Activity Icon" className="w-[50%] h-[50%] ml-9" />
             </div>
             <ul className="space-y-3 text-sm">
               <li className="flex items-start gap-2">
@@ -371,12 +371,20 @@ export default function Home() {
                   <p className="text-neutral-400 text-xs">1 day ago</p>
                 </div>
               </li>
+              <li className="flex items-start gap-2">
+                <span className="w-2 h-2 mt-1 bg-green-400 rounded-full" />
+                <div>
+                  <p>Build succeeded for <code>'proj3'</code></p>
+                  <p className="text-neutral-400 text-xs">1 hour ago</p>
+                </div>
+              </li>
+              
             </ul>
           </div>
         </div>
 
         {/* Test Panel */}
-        <div className="absolute right-4 bottom-10 z-50 w-72 max-w-full">
+        <div className="absolute right-4 bottom-10 z-50 w-72 max-w-full ">
           <div className="bg-gradient-to-br from-white/10 to-white/5 border border-white/20 backdrop-blur-xl rounded-xl p-4 text-white shadow-md">
             <div className="text-lg font-semibold mb-4">Test</div>
             <ul className="space-y-3 text-sm">

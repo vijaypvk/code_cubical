@@ -407,7 +407,7 @@ export function GlobeDemo() {
           className="div"
         >
           <h2 className="text-center text-xl md:text-4xl font-bold text-black dark:text-white">
-            Powering Serverless Across the Globe
+            AI-Powered Multicloud infrastructure
           </h2>
           <p className="text-center text-base md:text-lg font-normal text-neutral-700 dark:text-neutral-200 max-w-md mt-2 mx-auto z-40">
             CloudPulse helps developers deploy, scale, and manage serverless apps effortlessly—across any cloud, from anywhere in the world.

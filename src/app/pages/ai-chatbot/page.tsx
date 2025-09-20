@@ -146,47 +146,8 @@ export default function AIChatbot() {
     status: "pending",
     timestamp: new Date(Date.now() - 120000),
     details: "Triggered build for feature/auth-improvements branch",
-  },
-  {
-    id: "4",
-    action: "Node Drain",
-    target: "proxmox-node-2",
-    status: "success",
-    timestamp: new Date(Date.now() - 600000),
-    details: "Drained node for scheduled maintenance and migrated 4 VMs",
-  },
-  {
-    id: "5",
-    action: "Cost Optimization",
-    target: "gcp-cluster-us-central1",
-    status: "success",
-    timestamp: new Date(Date.now() - 900000),
-    details: "Recommended scaling down idle resources, estimated monthly savings $220",
-  },
-  {
-    id: "6",
-    action: "Security Patch",
-    target: "ubuntu-vm-01",
-    status: "success",
-    timestamp: new Date(Date.now() - 1800000),
-    details: "Applied latest CVE patches and rebooted successfully",
-  },
-  {
-    id: "7",
-    action: "Workflow Trigger",
-    target: "GitHub Actions - deploy.yml",
-    status: "error",
-    timestamp: new Date(Date.now() - 2400000),
-    details: "Deployment to staging failed at migration step",
-  },
-  {
-    id: "8",
-    action: "Alert Acknowledged",
-    target: "CPU High Alert on api-server",
-    status: "success",
-    timestamp: new Date(Date.now() - 3600000),
-    details: "AI auto-acknowledged and triggered scale up action",
-  },
+  }
+  
 ])
 
 
