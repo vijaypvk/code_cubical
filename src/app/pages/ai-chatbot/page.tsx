@@ -15,6 +15,7 @@ import {
   Play,
   RotateCcw,
   TrendingUp,
+  TrendingDown,
   GitBranch,
   Zap,
   CheckCircle,
@@ -122,31 +123,72 @@ export default function AIChatbot() {
   const scrollAreaRef = useRef<HTMLDivElement>(null)
 
   const [aiActions, setAiActions] = useState<AIAction[]>([
-    {
-      id: "1",
-      action: "Pod Restart",
-      target: "worker-queue-8f6a5b2c1d-m7n8o",
-      status: "success",
-      timestamp: new Date(Date.now() - 10000),
-      details: "Restarted failing pod in production namespace",
-    },
-    {
-      id: "2",
-      action: "Scale Deployment",
-      target: "web-app deployment",
-      status: "success",
-      timestamp: new Date(Date.now() - 300000),
-      details: "Scaled from 3 to 5 replicas due to high CPU usage",
-    },
-    {
-      id: "3",
-      action: "Jenkins Build",
-      target: "api-server pipeline",
-      status: "pending",
-      timestamp: new Date(Date.now() - 120000),
-      details: "Triggered build for feature/auth-improvements branch",
-    },
-  ])
+  {
+    id: "1",
+    action: "Pod Restart",
+    target: "worker-queue-8f6a5b2c1d-m7n8o",
+    status: "success",
+    timestamp: new Date(Date.now() - 10000),
+    details: "Restarted failing pod in production namespace",
+  },
+  {
+    id: "2",
+    action: "Scale Deployment",
+    target: "web-app deployment",
+    status: "success",
+    timestamp: new Date(Date.now() - 300000),
+    details: "Scaled from 3 to 5 replicas due to high CPU usage",
+  },
+  {
+    id: "3",
+    action: "Jenkins Build",
+    target: "api-server pipeline",
+    status: "pending",
+    timestamp: new Date(Date.now() - 120000),
+    details: "Triggered build for feature/auth-improvements branch",
+  },
+  {
+    id: "4",
+    action: "Node Drain",
+    target: "proxmox-node-2",
+    status: "success",
+    timestamp: new Date(Date.now() - 600000),
+    details: "Drained node for scheduled maintenance and migrated 4 VMs",
+  },
+  {
+    id: "5",
+    action: "Cost Optimization",
+    target: "gcp-cluster-us-central1",
+    status: "success",
+    timestamp: new Date(Date.now() - 900000),
+    details: "Recommended scaling down idle resources, estimated monthly savings $220",
+  },
+  {
+    id: "6",
+    action: "Security Patch",
+    target: "ubuntu-vm-01",
+    status: "success",
+    timestamp: new Date(Date.now() - 1800000),
+    details: "Applied latest CVE patches and rebooted successfully",
+  },
+  {
+    id: "7",
+    action: "Workflow Trigger",
+    target: "GitHub Actions - deploy.yml",
+    status: "error",
+    timestamp: new Date(Date.now() - 2400000),
+    details: "Deployment to staging failed at migration step",
+  },
+  {
+    id: "8",
+    action: "Alert Acknowledged",
+    target: "CPU High Alert on api-server",
+    status: "success",
+    timestamp: new Date(Date.now() - 3600000),
+    details: "AI auto-acknowledged and triggered scale up action",
+  },
+])
+
 
   useEffect(() => {
     if (scrollAreaRef.current) {
@@ -220,6 +262,29 @@ export default function AIChatbot() {
         ],
       }
     }
+    if (input.includes("pods") || input.includes("kubernetes")) {
+    return {
+      id: Date.now().toString(),
+      type: "ai",
+      content: "Here are your production Kubernetes pods:",
+      timestamp: new Date(),
+      table: {
+        headers: ["Pod Name", "Namespace", "Status", "CPU", "Memory", "Restarts"],
+        rows: [
+          ["web-app-7d4b8f9c6d-x8k2m", "production", "Running", "45%", "512Mi", "0"],
+          ["api-server-5c7d9e8f4a-p9q3r", "production", "Running", "78%", "1.2Gi", "1"],
+          ["worker-queue-8f6a5b2c1d-m7n8o", "production", "CrashLoopBackOff", "12%", "256Mi", "5"],
+          ["redis-cache-9e7f3a4b5c-k4l5m", "production", "Running", "23%", "128Mi", "0"],
+        ],
+      },
+      actions: [
+        { id: "restart-pod", label: "Restart Failing Pod", action: "restart", variant: "destructive", icon: RotateCcw },
+        { id: "scale-deployment", label: "Scale Deployment", action: "scale", variant: "default", icon: TrendingUp },
+        { id: "view-logs", label: "View Logs", action: "logs", variant: "secondary", icon: Activity },
+      ],
+    }
+  }
+
 
     if (input.includes("github") || input.includes("pr") || input.includes("pull request")) {
       return {
@@ -241,6 +306,100 @@ export default function AIChatbot() {
         ],
       }
     }
+    if (input.includes("deployment") || input.includes("k8s deployment")) {
+  return {
+    id: Date.now().toString(),
+    type: "ai",
+    content: "Here are your current Kubernetes deployments:",
+    timestamp: new Date(),
+    table: {
+      headers: ["Deployment", "Namespace", "Replicas", "Available", "CPU", "Memory"],
+      rows: [
+        ["web-app", "production", "5", "5", "65%", "2.1Gi"],
+        ["api-server", "production", "3", "2", "80%", "1.8Gi"],
+        ["worker-service", "staging", "2", "2", "40%", "900Mi"],
+      ],
+    },
+    actions: [
+      { id: "scale-deployment", label: "Scale Deployment", action: "scale", variant: "default", icon: TrendingUp },
+      { id: "restart-deployment", label: "Restart Deployment", action: "restart", variant: "secondary", icon: RotateCcw },
+    ],
+  }
+}
+
+if (input.includes("vm") || input.includes("proxmox")) {
+  return {
+    id: Date.now().toString(),
+    type: "ai",
+    content: "Here are your Proxmox VMs:",
+    timestamp: new Date(),
+    table: {
+      headers: ["VM Name", "Node", "Status", "CPU", "Memory", "Disk"],
+      rows: [
+        ["vm-web01", "pve-node1", "Running", "25%", "2.5Gi", "40Gi/100Gi"],
+        ["vm-db01", "pve-node2", "Running", "55%", "5.2Gi", "120Gi/200Gi"],
+        ["vm-test01", "pve-node1", "Stopped", "0%", "0Mi", "30Gi/50Gi"],
+      ],
+    },
+    actions: [
+      { id: "start-vm", label: "Start VM", action: "start", variant: "default", icon: Play },
+      { id: "restart-vm", label: "Restart VM", action: "restart", variant: "secondary", icon: RotateCcw },
+    ],
+  }
+}
+
+if (input.includes("optimize") || input.includes("savings")) {
+  return {
+    id: Date.now().toString(),
+    type: "ai",
+    content: "Here are some cloud cost optimization recommendations:",
+    timestamp: new Date(),
+    table: {
+      headers: ["Provider", "Service", "Recommendation", "Estimated Savings"],
+      rows: [
+        ["AWS", "EC2", "Downsize instance type t3.large → t3.medium", "$120/month"],
+        ["GCP", "Storage", "Move cold data to Nearline tier", "$75/month"],
+        ["Azure", "VMs", "Schedule shutdown for dev VMs at night", "$90/month"],
+      ],
+    },
+    actions: [
+      { id: "apply-recommendations", label: "Apply All", action: "apply", variant: "default", icon: Zap },
+      { id: "export-report", label: "Export Report", action: "export", variant: "secondary", icon: Activity },
+    ],
+  }
+}
+if (input.includes("issue") || input.includes("bug")) {
+  return {
+    id: Date.now().toString(),
+    type: "ai",
+    content: "Here are your open GitHub issues:",
+    timestamp: new Date(),
+    table: {
+      headers: ["Issue Title", "Repo", "Labels", "Status", "Assignee"],
+      rows: [
+        ["Fix login timeout bug", "web-app", "bug, urgent", "Open", "alice"],
+        ["Update API docs", "api-server", "documentation", "In Progress", "bob"],
+        ["Refactor worker queue", "worker-service", "enhancement", "Open", "unassigned"],
+      ],
+    },
+    actions: [
+      { id: "assign-issue", label: "Assign Issue", action: "assign", variant: "default", icon: User },
+      { id: "close-issue", label: "Close Issue", action: "close", variant: "secondary", icon: CheckCircle },
+    ],
+  }
+}
+if (input.includes("k8s") || input.includes("scale")) {
+  return {
+    id: Date.now().toString(),
+    type: "ai",
+    content: "Your `web-app` deployment is currently running 5 replicas. What would you like to do?",
+    timestamp: new Date(),
+    actions: [
+      { id: "scale-up", label: "Scale Up", action: "scale_up", variant: "default", icon: TrendingUp },
+      { id: "scale-down", label: "Scale Down", action: "scale_down", variant: "secondary", icon: TrendingDown },
+    ],
+  }
+}
 
     if (input.includes("cost") || input.includes("billing") || input.includes("usage")) {
       return {
