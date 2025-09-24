@@ -688,3 +688,437 @@ if (input.includes("k8s") || input.includes("scale")) {
     </div>
   )
 }
+// "use client"
+
+// import { useState, useRef, useEffect } from "react"
+// import axios from "axios"
+// import { Card, CardContent, CardHeader } from "@/app/components/ui/card"
+// import { Button } from "@/app/components/ui/button"
+// import { Input } from "@/app/components/ui/input"
+// import { Badge } from "@/app/components/ui/badge"
+// import { Avatar, AvatarFallback } from "@/app/components/ui/avatar"
+// import { ScrollArea } from "@/app/components/ui/scroll-area"
+// import {
+//   Send,
+//   Mic,
+//   Bot,
+//   User,
+//   Play,
+//   RotateCcw,
+//   TrendingUp,
+//   TrendingDown,
+//   GitBranch,
+//   Zap,
+//   CheckCircle,
+//   XCircle,
+//   Clock,
+//   Activity,
+//   Settings,
+//   History,
+// } from "lucide-react"
+
+// interface Message {
+//   id: string
+//   type: "user" | "ai" | "system"
+//   content: string
+//   timestamp: Date
+//   actions?: ActionButton[]
+//   table?: TableData
+//   chart?: ChartData
+//   status?: "success" | "error" | "pending"
+// }
+
+// interface ActionButton {
+//   id: string
+//   label: string
+//   action: string
+//   variant: "default" | "destructive" | "secondary"
+//   icon?: any
+// }
+
+// interface TableData {
+//   headers: string[]
+//   rows: any[][]
+// }
+
+// interface ChartData {
+//   type: "cpu" | "memory" | "network"
+//   data: number[]
+//   labels: string[]
+// }
+
+// interface AIAction {
+//   id: string
+//   action: string
+//   target: string
+//   status: "success" | "error" | "pending"
+//   timestamp: Date
+//   details: string
+// }
+
+// export default function AIChatbot() {
+//   const [mounted, setMounted] = useState(false) // ✅ hydration-safe flag
+//   useEffect(() => setMounted(true), [])
+//   const [messages, setMessages] = useState<Message[]>([
+//     {
+//       id: "1",
+//       type: "ai",
+//       content:
+//         "Hello! I'm CloudPilot AI, your operations assistant. I can help you monitor and manage your multi-cloud infrastructure, Kubernetes clusters, Docker containers, Jenkins pipelines, and GitHub repositories. What would you like to do today?",
+//       timestamp: new Date(Date.now() - 60000),
+//     },
+//   ])
+//   const [inputValue, setInputValue] = useState("")
+//   const [isTyping, setIsTyping] = useState(false)
+//   const [isOnline, setIsOnline] = useState(true)
+//   const [showHistory, setShowHistory] = useState(false)
+//   const scrollAreaRef = useRef<HTMLDivElement>(null)
+
+//   const [aiActions, setAiActions] = useState<AIAction[]>([])
+
+//   useEffect(() => {
+//     if (scrollAreaRef.current) {
+//       scrollAreaRef.current.scrollTop = scrollAreaRef.current.scrollHeight
+//     }
+//   }, [messages])
+
+//   // const formatTime = (date: Date) => date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+//   const formatTime = (date: Date) => {
+//     if (!mounted) return "..." // ✅ show placeholder during SSR
+//     return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+//   }
+//   const getStatusIcon = (status?: "success" | "error" | "pending") => {
+//     switch (status) {
+//       case "success":
+//         return <CheckCircle className="h-4 w-4 text-green-400" />
+//       case "error":
+//         return <XCircle className="h-4 w-4 text-red-400" />
+//       case "pending":
+//         return <Clock className="h-4 w-4 text-yellow-400 animate-pulse" />
+//       default:
+//         return null
+//     }
+//   }
+
+//   // ✅ Main function: send user input to n8n and receive AI response
+//   const handleSendMessage = async () => {
+//     if (!inputValue.trim()) return
+
+//     const userMessage: Message = {
+//       id: Date.now().toString(),
+//       type: "user",
+//       content: inputValue,
+//       timestamp: new Date(),
+//     }
+
+//     setMessages((prev) => [...prev, userMessage])
+//     setInputValue("")
+//     setIsTyping(true)
+
+//     try {
+//       // Call our API route which proxies to n8n webhook
+//       const response = await axios.post(
+//         "/api/chat",
+//         { message: userMessage.content }
+//       )
+
+//       // n8n should return { reply, actions?, table?, chart? }
+//       const { reply, actions, table, chart } = response.data
+
+//       const aiMessage: Message = {
+//         id: Date.now().toString(),
+//         type: "ai",
+//         content: reply || "No response from AI.",
+//         timestamp: new Date(),
+//         actions: actions,
+//         table: table,
+//         chart: chart,
+//       }
+
+//       setMessages((prev) => [...prev, aiMessage])
+//     } catch (err: any) {
+//       console.error("Error sending message to n8n:", err)
+      
+//       let errorContent = "Failed to get response from AI. Please try again."
+      
+//       // Provide more specific error messages
+//       if (err.code === 'ERR_NETWORK') {
+//         errorContent = "Network error: Cannot connect to AI service. Please check your connection."
+//       } else if (err.response?.status === 500) {
+//         errorContent = "AI service is temporarily unavailable. The n8n server might be down or unreachable."
+//       } else if (err.code === 'ECONNREFUSED') {
+//         errorContent = "Connection refused: The AI service is not running."
+//       }
+      
+//       const errorMessage: Message = {
+//         id: Date.now().toString(),
+//         type: "ai",
+//         content: errorContent,
+//         timestamp: new Date(),
+//         status: "error",
+//       }
+//       setMessages((prev) => [...prev, errorMessage])
+//     } finally {
+//       setIsTyping(false)
+//     }
+//   }
+
+//   const handleActionClick = (action: ActionButton, messageId: string) => {
+//     const systemMessage: Message = {
+//       id: Date.now().toString(),
+//       type: "system",
+//       content: `AI Action: Executing ${action.label}...`,
+//       timestamp: new Date(),
+//       status: "pending",
+//     }
+
+//     setMessages((prev) => [...prev, systemMessage])
+
+//     const newAction: AIAction = {
+//       id: Date.now().toString(),
+//       action: action.label,
+//       target: "Selected resource",
+//       status: "pending",
+//       timestamp: new Date(),
+//       details: `Executing ${action.action} operation`,
+//     }
+
+//     setAiActions((prev) => [newAction, ...prev])
+
+//     setTimeout(() => {
+//       const successMessage: Message = {
+//         id: (Date.now() + 1).toString(),
+//         type: "system",
+//         content: `${action.label} completed successfully!`,
+//         timestamp: new Date(),
+//         status: "success",
+//       }
+
+//       setMessages((prev) => [...prev, successMessage])
+
+//       setAiActions((prev) =>
+//         prev.map((a) =>
+//           a.id === newAction.id ? { ...a, status: "success", details: `${action.label} completed successfully` } : a,
+//         ),
+//       )
+//     }, 2000)
+//   }
+
+//   return (
+//     <div className="min-h-screen bg-black text-white p-6">
+//       <div className="max-w-7xl mx-auto">
+//         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 h-[calc(100vh-3rem)]">
+//           {/* Main Chat Panel */}
+//           <div className="lg:col-span-3">
+//             <Card className="bg-gray-950 border-gray-800 h-full flex flex-col">
+//               {/* Chat Header */}
+//               <CardHeader className="border-b border-gray-800 pb-4">
+//                 <div className="flex items-center justify-between">
+//                   <div className="flex items-center space-x-3">
+//                     <Avatar className="h-10 w-10 bg-blue-600">
+//                       <AvatarFallback className="bg-blue-600 text-white">
+//                         <Bot className="h-5 w-5" />
+//                       </AvatarFallback>
+//                     </Avatar>
+//                     <div>
+//                       <h2 className="text-xl font-semibold text-white">CloudPilot AI – Operations Bot</h2>
+//                       <div className="flex items-center space-x-2">
+//                         <div className={`h-2 w-2 rounded-full ${isOnline ? "bg-green-400" : "bg-red-400"}`} />
+//                         <span className="text-sm text-gray-400">{isOnline ? "Online" : "Offline"}</span>
+//                       </div>
+//                     </div>
+//                   </div>
+//                   <Button
+//                     variant="outline"
+//                     size="sm"
+//                     onClick={() => setShowHistory(!showHistory)}
+//                     className="border-gray-700 text-gray-300 hover:bg-gray-800"
+//                   >
+//                     <History className="h-4 w-4 mr-2" />
+//                     History
+//                   </Button>
+//                 </div>
+//               </CardHeader>
+
+//               {/* Chat Messages */}
+//               <CardContent className="flex-1 p-0">
+//                 <ScrollArea className="h-full p-6" ref={scrollAreaRef}>
+//                   <div className="space-y-4">
+//                     {messages.map((message) => (
+//                       <div
+//                         key={message.id}
+//                         className={`flex ${message.type === "user" ? "justify-end" : "justify-start"}`}
+//                       >
+//                         <div className={`max-w-3xl ${message.type === "user" ? "order-2" : "order-1"}`}>
+//                           <div
+//                             className={`rounded-lg p-4 ${
+//                               message.type === "user"
+//                                 ? "bg-blue-600 text-white ml-12"
+//                                 : message.type === "system"
+//                                   ? "bg-gray-800 border border-gray-700"
+//                                   : "bg-gray-900 border border-gray-800"
+//                             }`}
+//                           >
+//                             <div className="flex items-start space-x-3">
+//                               {message.type !== "user" && (
+//                                 <Avatar className="h-6 w-6 mt-1">
+//                                   <AvatarFallback className="bg-gray-700 text-gray-300 text-xs">
+//                                     {message.type === "system" ? (
+//                                       <Settings className="h-3 w-3" />
+//                                     ) : (
+//                                       <Bot className="h-3 w-3" />
+//                                     )}
+//                                   </AvatarFallback>
+//                                 </Avatar>
+//                               )}
+//                               <div className="flex-1">
+//                                 <div className="flex items-center space-x-2 mb-2">
+//                                   <span className="text-xs text-gray-400">{formatTime(message.timestamp)}</span>
+//                                   {message.status && getStatusIcon(message.status)}
+//                                 </div>
+//                                 <p className="text-sm leading-relaxed whitespace-pre-line">{message.content}</p>
+
+//                                 {/* Table Display */}
+//                                 {message.table && (
+//                                   <div className="mt-4 overflow-x-auto">
+//                                     <table className="w-full text-sm">
+//                                       <thead>
+//                                         <tr className="border-b border-gray-700">
+//                                           {message.table.headers.map((header, i) => (
+//                                             <th key={i} className="text-left py-2 px-3 text-gray-300 font-medium">
+//                                               {header}
+//                                             </th>
+//                                           ))}
+//                                         </tr>
+//                                       </thead>
+//                                       <tbody>
+//                                         {message.table.rows.map((row, i) => (
+//                                           <tr key={i} className="border-b border-gray-800">
+//                                             {row.map((cell, j) => (
+//                                               <td key={j} className="py-2 px-3 text-gray-200">
+//                                                 {cell}
+//                                               </td>
+//                                             ))}
+//                                           </tr>
+//                                         ))}
+//                                       </tbody>
+//                                     </table>
+//                                   </div>
+//                                 )}
+
+//                                 {/* Action Buttons */}
+//                                 {message.actions && (
+//                                   <div className="mt-4 flex flex-wrap gap-2">
+//                                     {message.actions.map((action) => {
+//                                       const Icon = action.icon
+//                                       return (
+//                                         <Button
+//                                           key={action.id}
+//                                           variant={action.variant}
+//                                           size="sm"
+//                                           onClick={() => handleActionClick(action, message.id)}
+//                                           className="text-xs"
+//                                         >
+//                                           {Icon && <Icon className="h-3 w-3 mr-1" />}
+//                                           {action.label}
+//                                         </Button>
+//                                       )
+//                                     })}
+//                                   </div>
+//                                 )}
+//                               </div>
+//                             </div>
+//                           </div>
+//                         </div>
+//                       </div>
+//                     ))}
+
+//                     {/* Typing Indicator */}
+//                     {isTyping && (
+//                       <div className="flex justify-start">
+//                         <div className="bg-gray-900 border border-gray-800 rounded-lg p-4 max-w-xs">
+//                           <div className="flex items-center space-x-3">
+//                             <Avatar className="h-6 w-6">
+//                               <AvatarFallback className="bg-gray-700 text-gray-300 text-xs">
+//                                 <Bot className="h-3 w-3" />
+//                               </AvatarFallback>
+//                             </Avatar>
+//                             <div className="flex space-x-1">
+//                               <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce" />
+//                               <div
+//                                 className="w-2 h-2 bg-gray-500 rounded-full animate-bounce"
+//                                 style={{ animationDelay: "0.1s" }}
+//                               />
+//                               <div
+//                                 className="w-2 h-2 bg-gray-500 rounded-full animate-bounce"
+//                                 style={{ animationDelay: "0.2s" }}
+//                               />
+//                             </div>
+//                           </div>
+//                         </div>
+//                       </div>
+//                     )}
+//                   </div>
+//                 </ScrollArea>
+//               </CardContent>
+
+//               {/* Chat Input */}
+//               <div className="border-t border-gray-800 p-4">
+//                 <div className="flex space-x-2">
+//                   <Input
+//                     value={inputValue}
+//                     onChange={(e) => setInputValue(e.target.value)}
+//                     onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
+//                     placeholder="Ask me to monitor resources, restart services, check builds..."
+//                     className="flex-1 bg-gray-900 border-gray-700 text-white placeholder-gray-400"
+//                   />
+//                   <Button
+//                     variant="outline"
+//                     size="icon"
+//                     className="border-gray-700 text-gray-300 hover:bg-gray-800 bg-transparent"
+//                   >
+//                     <Mic className="h-4 w-4" />
+//                   </Button>
+//                   <Button onClick={handleSendMessage} className="bg-blue-600 hover:bg-blue-700">
+//                     <Send className="h-4 w-4" />
+//                   </Button>
+//                 </div>
+//               </div>
+//             </Card>
+//           </div>
+
+//           {/* AI Actions History Panel */}
+//           <div className={`${showHistory ? "block" : "hidden lg:block"}`}>
+//             <Card className="bg-gray-950 border-gray-800 h-full">
+//               <CardHeader className="border-b border-gray-800 pb-4">
+//                 <h3 className="text-lg font-semibold text-white flex items-center">
+//                   <Activity className="h-5 w-5 mr-2 text-blue-400" />
+//                   AI Actions Log
+//                 </h3>
+//               </CardHeader>
+//               <CardContent className="p-0">
+//                 <ScrollArea className="h-full p-4">
+//                   <div className="space-y-3">
+//                     {aiActions.map((action) => (
+//                       <div key={action.id} className="bg-gray-900 border border-gray-800 rounded-lg p-3">
+//                         <div className="flex items-start justify-between mb-2">
+//                           <div className="flex items-center space-x-2">
+//                             {getStatusIcon(action.status)}
+//                             <span className="text-sm font-medium text-white">{action.action}</span>
+//                           </div>
+//                           <span className="text-xs text-gray-400">{formatTime(action.timestamp)}</span>
+//                         </div>
+//                         <p className="text-xs text-gray-300 mb-1">Target: {action.target}</p>
+//                         <p className="text-xs text-gray-400">{action.details}</p>
+//                       </div>
+//                     ))}
+//                   </div>
+//                 </ScrollArea>
+//               </CardContent>
+//             </Card>
+//           </div>
+//         </div>
+//       </div>
+//     </div>
+//   )
+// }
