@@ -7,16 +7,23 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
     console.log('Request body:', body)
     
+    // Prepare the payload for n8n - use the correct field name
+    const n8nPayload = {
+      chatInput: body.message  // This is the field name that n8n expects
+    }
+    
     // Forward the request to n8n
     console.log('Forwarding to n8n webhook...')
+    console.log('n8n payload:', JSON.stringify(n8nPayload, null, 2))
+    
     const response = await axios.post(
       'http://192.168.10.20:5678/webhook/61927fdb-5d6e-47c2-aa73-bb48e46d41ad/chat',
-      body,
+      n8nPayload,
       {
         headers: {
           'Content-Type': 'application/json',
         },
-        timeout: 60000, // 60 second timeout (increased for n8n processing)
+        timeout: 30000, // 30 second timeout
       }
     )
 
@@ -25,7 +32,7 @@ export async function POST(request: NextRequest) {
     
     // Transform n8n response format to match frontend expectations
     const transformedResponse = {
-      reply: response.data.output || response.data.reply || "No response from AI.",
+      reply: response.data.output || response.data.response || response.data.reply || response.data.answer || "No response from AI.",
       actions: response.data.actions || undefined,
       table: response.data.table || undefined,
       chart: response.data.chart || undefined
@@ -38,7 +45,8 @@ export async function POST(request: NextRequest) {
       message: error.message,
       code: error.code,
       response: error.response?.data,
-      status: error.response?.status
+      status: error.response?.status,
+      config: error.config?.data
     })
     
     // Handle specific error types
